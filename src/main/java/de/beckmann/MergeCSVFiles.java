@@ -32,7 +32,7 @@ public class MergeCSVFiles {
         System.out.println(String.format("Merging Files %s to output file %s", fileNames, outputFileName));
 
         Map<String, String> mergedData = new HashMap<>();
-
+        String header = "";
         for (String fileName : fileNames) {
             try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
                 String line;
@@ -41,6 +41,11 @@ public class MergeCSVFiles {
                     if (parts.length >= 2) {
                         String id = parts[0];
                         String data = parts[1];
+                        if(id.equals("Timestamp"))
+                        {
+                            header = appendHeader(header, id, data);
+                            continue;
+                        }
                         mergedData.merge(id, data, (existingData, newData) -> existingData + SEPARATOR + newData);
                     }
                 }
@@ -50,6 +55,7 @@ public class MergeCSVFiles {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
+            writer.write(header + LINEBREAK);
             for (Map.Entry<String, String> entry : mergedData.entrySet()) {
                 writer.write(entry.getKey() + SEPARATOR + entry.getValue() + LINEBREAK);
             }
@@ -58,6 +64,19 @@ public class MergeCSVFiles {
         }
 
         System.out.println("Merged data saved to " + outputFileName);
+    }
+
+    private static String appendHeader(String header, String id, String data)
+    {
+        
+        if(header.equals(""))
+        {
+            header = id + SEPARATOR + data;
+            return header;
+        }
+        
+        return header.concat(SEPARATOR).concat(data);
+
     }
 
     private static List<String> fileNames(String[] args) {
