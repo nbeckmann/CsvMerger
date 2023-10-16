@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,18 @@ public class MergeCSVFiles {
 
         List<String> fileNames = fileNames(args);
         String outputFileName = outputFile(args);
+
+        if(outputFileName == null)
+        {
+            System.out.println("Missing outputFileName!");
+        }
+
+        if(fileNames.isEmpty())
+        {
+            System.out.println("Missing outputFileName!");
+        }
+
+        System.out.println(String.format("Merging Files %s to output file %s", fileNames, outputFileName));
 
         Map<String, String> mergedData = new HashMap<>();
 
@@ -49,13 +62,29 @@ public class MergeCSVFiles {
     }
 
     private static List<String> fileNames(String[] args) {
-        List<String> fileNames = Arrays.asList("C:\\Users\\nicob\\Documents\\result1.csv",
-                "C:\\Users\\nicob\\Documents\\result2.csv", "C:\\Users\\nicob\\Documents\\result3.csv");
+        int numberArgs = args.length;
+        List<String> fileNames = new ArrayList<>();
+        if (numberArgs < 2)
+        {
+            return fileNames;
+        }
+
+        for(int i = 1; i < numberArgs; i++)
+        {
+            fileNames.add(args[i]);
+        }
+
+        //List<String> fileNames = Arrays.asList("C:\\Users\\nicob\\Documents\\result1.csv",
+        //        "C:\\Users\\nicob\\Documents\\result2.csv", "C:\\Users\\nicob\\Documents\\result3.csv");
 
         return fileNames;
     }
 
     private static String outputFile(String[] args) {
-        return "C:\\Users\\nicob\\Documents\\merged.csv";
+        if(args.length < 1)
+        {
+            return null;
+        }
+        return args[0];
     }
 }
